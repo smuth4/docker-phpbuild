@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Variables
+## Variables
 VERSION=5.3.29
 ARCH=x86_64
 
 TEMPDIR="$(mktemp -d)"
 
-# Utility functions
+## Utility functions
 function createmoduleini() {
     mkdir -p /etc/php.d
     for name; do
@@ -16,11 +16,14 @@ function createmoduleini() {
 
 cd "$TEMPDIR"
 
-# Install packages
+## Install packages
 
 # Utiliies
 yum install -y wget tar gcc gcc-c++
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+
+yum install -y ruby rubygems
+gem install fpm
 
 # Development libraries
 yum install -y httpd-devel \
@@ -56,9 +59,11 @@ yum install -y httpd-devel \
 
 # Fetch & build
 
-wget http://us1.php.net/get/php-"${VERSION}".tar.gz/from/this/mirror -O php-"${VERSION}".tar.gz 
+tarball=php-"${VERSION}".tar.gz
+wget http://us1.php.net/get/php-"${VERSION}".tar.gz/from/this/mirror -O "$tarball"
 
-tar xzvf php-"${VERSION}".tar.gz
+echo "Extracting $tarball"
+tar xzf "$tarball"
 
 cd php-"${VERSION}"
 
@@ -103,7 +108,6 @@ cd php-"${VERSION}"
     --enable-calendar \
     --with-libxml-dir=/usr \
     --enable-xml \
-    --with-system-tzdata \
     --with-mhash \
     --libdir=/usr/lib64/php \
     --enable-pcntl \
@@ -164,13 +168,13 @@ cd php-"${VERSION}"
 make 
 make install
 
-# Package
+## Package
 
 cp -r /usr/lib64/php/20090626 /usr/lib64/php/modules
 
 cd /
 
-## php-pdo
+# php-pdo
 createmoduleini pdo pdo_sqlite sqlite3
 fpm -f -C / -s dir -t rpm \
   -n php-pdo -v "${VERSION}" \
@@ -201,7 +205,7 @@ fpm -f -C / -s dir -t rpm \
     --provides "php-pdo(x86-64)" \
     /etc/php.d/pdo.ini /etc/php.d/pdo_sqlite.ini  /etc/php.d/sqlite3.ini /usr/lib64/php/modules/pdo_sqlite.so /usr/lib64/php/modules/pdo.so /usr/lib64/php/modules/sqlite3.so
 
-## php
+# php
 fpm -s dir -t rpm -n php \
     -p "$TEMPDIR"/php-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php)" \
@@ -255,7 +259,7 @@ fpm -s dir -t rpm -n php \
     --depends "rpmlib(PayloadIsXz)" \
     /etc/httpd/conf.d/php.conf /usr/lib64/httpd/modules/libphp5.so /var/lib/php/session/
 
-## php-cli
+# php-cli
 fpm -s dir -t rpm -n php-cli \
     -p "$TEMPDIR"/php-cli-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "php-cgi" \
@@ -310,7 +314,7 @@ fpm -s dir -t rpm -n php-cli \
     --depends "rpmlib(PayloadIsXz)" \
     /usr/bin/phar /usr/bin/phar.phar /usr/bin/php /usr/bin/php-cgi /usr/share/man/man1/php.1
 
-## php-common
+# php-common
 createmodule curl fileinfo json phar zip
 fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php-common)" \
@@ -384,7 +388,7 @@ fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v 
     /usr/lib64/php/modules/curl.so /usr/lib64/php/modules/fileinfo.so /usr/lib64/php/modules/json.so \
     /usr/lib64/php/modules/phar.so /usr/lib64/php/modules/zip.so var/lib/php usr/share/php usr/lib64/php/modules
 
-## php-devel
+# php-devel
 fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
     --provides "config(php-devel)" \
     --provides "php-devel" \
@@ -400,7 +404,7 @@ fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rp
     --depends "rpmlib(PayloadIsXz)" \
     /etc/rpm/macros.php /usr/bin/php-config /usr/bin/phpize usr/lib64/php/build usr/include/php
 
-## php-gd
+# php-gd
 createmoduleini gd
 fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd."${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
     --provides "config(php-gd)" \
@@ -431,7 +435,7 @@ fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd."${VERSION}"."${ARCH}".rpm -v "
     --depends "rpmlib(PayloadIsXz)" \
     /etc/php.d/gd.ini /usr/lib64/php/modules/gd.so
 
-## php-mcrypt
+# php-mcrypt
 createmoduleini mcrypt
 fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt."${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mcrypt)" \
@@ -453,7 +457,7 @@ fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt."${V
     --depends "rpmlib(PayloadIsXz)" \
     /etc/php.d/mcrypt.ini /usr/lib64/php/modules/mcrypt.so
 
-## php-mysql
+# php-mysql
 createmoduleini mysql mysqli pdo_mysql mysqlnd
 fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$TEMPDIR"/php-mysql."${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mysql)" \
