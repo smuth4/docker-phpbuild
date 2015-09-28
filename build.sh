@@ -471,7 +471,7 @@ fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rp
 
 # php-gd
 createmoduleini gd
-fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd."${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
+fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
     --provides "config(php-gd)" \
     --provides "gd.so()(64bit)" \
     --provides "php-gd" \
@@ -502,7 +502,7 @@ fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd."${VERSION}"."${ARCH}".rpm -v "
 
 # php-mcrypt
 createmoduleini mcrypt
-fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt."${VERSION}"."${ARCH}".rpm \
+fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt-"${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mcrypt)" \
     --provides "mcrypt.so()(64bit)" \
     --provides "php-mcrypt" \
@@ -524,7 +524,7 @@ fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt."${V
 
 # php-mysql
 createmoduleini mysql mysqli pdo_mysql mysqlnd
-fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$TEMPDIR"/php-mysql."${VERSION}"."${ARCH}".rpm \
+fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$TEMPDIR"/php-mysql-"${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mysql)" \
     --provides "mysql.so()(64bit)" \
     --provides "mysqli.so()(64bit)" \
