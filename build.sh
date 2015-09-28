@@ -1,6 +1,12 @@
 #!/bin/bash
+# A custom build script for PHP
+#
+# For the most part, the configure flags, the --provides flags, the --depends flags, and the file lists are borrowed directly from
+# the official CentOS RPMs. Several documentation folders have been skipped for the sake of speed, but it should otherwise be a
+# drop-in replacement for PHP on CentOS 6
 
 ## Variables
+
 VERSION=5.3.29
 ARCH=x86_64
 
