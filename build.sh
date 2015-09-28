@@ -8,6 +8,7 @@ TEMPDIR="$(mktemp -d)"
 
 # Utility functions
 function createmoduleini() {
+    mkdir -p /etc/php.d
     for name; do
         echo "; Enable $name extension module\nextension=$name.so" > /etc/php.d/"$name".ini
     done
@@ -15,14 +16,51 @@ function createmoduleini() {
 
 cd "$TEMPDIR"
 
-yum install wget tar -y
+# Install packages
+
+# Utiliies
+yum install -y wget tar gcc gcc-c++
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+
+# Development libraries
+yum install -y httpd-devel \
+    mysql-devel \
+    libmcrypt-devel \
+    curl-devel \
+    openssl-devel \
+    libedit-devel \
+    readline-devel \
+    sqlite-devel \
+    db4-devel \
+    enchant-devel \
+    libjpeg-devel \
+    libpng-devel \
+    libXpm-devel \
+    freetype-devel \
+    t1lib-devel \
+    gmp-devel \
+    libicu-devel \
+    openldap-devel \
+    unixODBC-devel \
+    postgresql-devel \
+    aspell-devel \
+    net-snmp-devel \
+    sqlite2-devel \
+    libtidy-devel \
+    libxml2-devel \
+    bzip2-devel \
+    httpd-devel \
+    libc-client-devel \
+    freetds-devel \
+    libxslt-devel
+
+# Fetch & build
+
 wget http://us1.php.net/get/php-"${VERSION}".tar.gz/from/this/mirror -O php-"${VERSION}".tar.gz 
 
 tar xzvf php-"${VERSION}".tar.gz
 
 cd php-"${VERSION}"
-
-sudo yum install -y httpd-devel #list of pac${VERSION}
 
 ./configure --build=x86_64-redhat-linux-gnu --host=x86_64-redhat-linux-gnu --target=x86_64-redhat-linux-gnu \
     --program-prefix= \
@@ -67,7 +105,6 @@ sudo yum install -y httpd-devel #list of pac${VERSION}
     --enable-xml \
     --with-system-tzdata \
     --with-mhash \
-    --enable-force-cgi-redirect \
     --libdir=/usr/lib64/php \
     --enable-pcntl \
     --with-imap=shared \
@@ -94,7 +131,7 @@ sudo yum install -y httpd-devel #list of pac${VERSION}
     --enable-xmlreader=shared \
     --enable-xmlwriter=shared \
     --with-curl=shared,/usr \
-    --enable-fastcgi \
+    --enable-cgi \
     --enable-pdo=shared \
     --with-pdo-odbc=shared,unixODBC,/usr \
     --with-pdo-mysql=shared,mysqlnd \
@@ -121,12 +158,13 @@ sudo yum install -y httpd-devel #list of pac${VERSION}
     --enable-intl=shared \
     --with-icu-dir=/usr \
     --with-enchant=shared,/usr \
-    --with-recode=shared,/usr \
     --with-apxs2=shared,/usr \
     --with-apxs2=/usr/sbin/apxs
 
 make 
 make install
+
+# Package
 
 cp -r /usr/lib64/php/20090626 /usr/lib64/php/modules
 
