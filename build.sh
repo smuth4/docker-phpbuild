@@ -14,16 +14,31 @@ function createmoduleini() {
     done
 }
 
+cat > /etc/rpm/macros.php <<EOF
+#
+# Interface versions exposed by PHP:
+#
+%php_core_api 20090626
+%php_zend_api 20090626
+%php_pdo_api  20080721
+%php_version  5.3.3
+
+%php_extdir    %{_libdir}/php/modules
+%php_inidir    %{_sysconfdir}/php.d
+%php_incldir   %{_includedir}/php
+%__php         %{_bindir}/php
+EOF
+
 cd "$TEMPDIR"
 
 ## Install packages
 
-# Utiliies
-yum install -y wget tar gcc gcc-c++
+# Tools
+yum install -y wget tar gcc gcc-c++ rpm-build
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 
-yum install -y ruby rubygems
-gem install fpm
+yum install -y ruby rubygems ruby-devel
+gem install --no-rdoc --no-ri fpm
 
 # Development libraries
 yum install -y httpd-devel \
@@ -176,9 +191,9 @@ cd /
 
 # php-pdo
 createmoduleini pdo pdo_sqlite sqlite3
-fpm -f -C / -s dir -t rpm \
-  -n php-pdo -v "${VERSION}" \
-  -p "$TEMPDIR"/php-pdo-"${VERSION}".rpm \
+fpm -s dir -t rpm \
+    -n php-pdo -v "${VERSION}" \
+    -p "$TEMPDIR"/php-pdo-"${VERSION}"."${ARCH}".rpm \
     --depends "config(php-pdo)" \
     --depends "libc.so.6()(64bit)" \
     --depends "libc.so.6(GLIBC_2.2.5)(64bit)" \
@@ -315,7 +330,7 @@ fpm -s dir -t rpm -n php-cli \
     /usr/bin/phar /usr/bin/phar.phar /usr/bin/php /usr/bin/php-cgi /usr/share/man/man1/php.1
 
 # php-common
-createmodule curl fileinfo json phar zip
+createmoduleini curl fileinfo json phar zip
 fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php-common)" \
     --provides "curl.so()(64bit)" \
