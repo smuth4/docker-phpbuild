@@ -10,6 +10,7 @@
 VERSION=5.3.29
 ARCH=x86_64
 
+export EXTENSION_DIR=/usr/lib64/php/modules
 TEMPDIR="$(mktemp -d)"
 
 ## Utility functions
@@ -236,8 +237,6 @@ make install
 
 ## Package
 
-cp -r /usr/lib64/php/20090626 /usr/lib64/php/modules
-
 cd /
 
 # php-pdo
@@ -452,7 +451,7 @@ fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v 
     --depends "rpmlib(PayloadIsXz)" \
     /etc/php.d/curl.ini /etc/php.d/fileinfo.ini /etc/php.d/json.ini /etc/php.d/phar.ini /etc/php.d/zip.ini /etc/php.ini \
     /usr/lib64/php/modules/curl.so /usr/lib64/php/modules/fileinfo.so /usr/lib64/php/modules/json.so \
-    /usr/lib64/php/modules/phar.so /usr/lib64/php/modules/zip.so var/lib/php usr/share/php usr/lib64/php/modules
+    /usr/lib64/php/modules/phar.so /usr/lib64/php/modules/zip.so var/lib/php
 
 # php-devel
 fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
