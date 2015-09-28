@@ -20,7 +20,9 @@ function createmoduleini() {
     done
 }
 
-## Add CentOS-specific files
+## Add CentOS-specific files/directories
+
+mkdir -p /var/lib/php/session/
 
 cat > /etc/rpm/macros.php <<EOF
 #
@@ -29,7 +31,7 @@ cat > /etc/rpm/macros.php <<EOF
 %php_core_api 20090626
 %php_zend_api 20090626
 %php_pdo_api  20080721
-%php_version  5.3.3
+%php_version  5.3.29
 
 %php_extdir    %{_libdir}/php/modules
 %php_inidir    %{_sysconfdir}/php.d
@@ -37,6 +39,7 @@ cat > /etc/rpm/macros.php <<EOF
 %__php         %{_bindir}/php
 EOF
 
+mkdir -p /etc/httpd/conf.d/
 cat > /etc/httpd/conf.d/php.conf <<EOF
 #
 # PHP is an HTML-embedded scripting language which attempts to make it
@@ -74,7 +77,9 @@ cd "$TEMPDIR"
 
 # Tools
 yum install -y wget tar gcc gcc-c++ rpm-build
+# mycrypt and a couple other libraries are only available through EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+
 
 yum install -y ruby rubygems ruby-devel
 gem install --no-rdoc --no-ri fpm
@@ -121,7 +126,7 @@ tar xzf "$tarball"
 
 cd php-"${VERSION}"
 
-./configure --build=x86_64-redhat-linux-gnu --host=x86_64-redhat-linux-gnu --target=x86_64-redhat-linux-gnu \
+configure_flags="--build=x86_64-redhat-linux-gnu --host=x86_64-redhat-linux-gnu --target=x86_64-redhat-linux-gnu \
     --program-prefix= \
     --prefix=/usr --exec-prefix=/usr \
     --bindir=/usr/bin --sbindir=/usr/sbin \
@@ -215,11 +220,18 @@ cd php-"${VERSION}"
     --enable-fileinfo=shared \
     --enable-intl=shared \
     --with-icu-dir=/usr \
-    --with-enchant=shared,/usr \
-    --with-apxs2=shared,/usr \
-    --with-apxs2=/usr/sbin/apxs
+    --with-enchant=shared,/usr"
+
+./configure $configure_flags
 
 make 
+make install
+
+# Apache support disables building php-cgi binary, so we have to build
+# it again to have our cake and eat it too
+./configure $configure_flags --with-apxs2=shared,/usr --with-apxs2=/usr/sbin/apxs
+
+make
 make install
 
 ## Package
