@@ -9,6 +9,7 @@
 
 VERSION=5.3.29
 ARCH=x86_64
+PACKAGE_DIR=/packages
 
 export EXTENSION_DIR=/usr/lib64/php/modules
 TEMPDIR="$(mktemp -d)"
@@ -237,13 +238,15 @@ make install
 
 ## Package
 
+mkdir -p "$PACKAGE_DIR"
+
 cd /
 
 # php-pdo
 createmoduleini pdo pdo_sqlite sqlite3
 fpm -s dir -t rpm \
     -n php-pdo -v "${VERSION}" \
-    -p "$TEMPDIR"/php-pdo-"${VERSION}"."${ARCH}".rpm \
+    -p "$PACKAGE_DIR"/php-pdo-"${VERSION}"."${ARCH}".rpm \
     --depends "config(php-pdo)" \
     --depends "libc.so.6()(64bit)" \
     --depends "libc.so.6(GLIBC_2.2.5)(64bit)" \
@@ -272,7 +275,7 @@ fpm -s dir -t rpm \
 
 # php
 fpm -s dir -t rpm -n php \
-    -p "$TEMPDIR"/php-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
+    -p "$PACKAGE_DIR"/php-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php)" \
     --provides "libphp5.so()(64bit)" \
     --provides "mod_php" \
@@ -326,7 +329,7 @@ fpm -s dir -t rpm -n php \
 
 # php-cli
 fpm -s dir -t rpm -n php-cli \
-    -p "$TEMPDIR"/php-cli-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
+    -p "$PACKAGE_DIR"/php-cli-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "php-cgi" \
     --provides "php-pcntl" \
     --provides "php-readline" \
@@ -381,7 +384,7 @@ fpm -s dir -t rpm -n php-cli \
 
 # php-common
 createmoduleini curl fileinfo json phar zip
-fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
+fpm  -f -s dir -t rpm -n php-common -p "$PACKAGE_DIR"/php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php-common)" \
     --provides "curl.so()(64bit)" \
     --provides "fileinfo.so()(64bit)" \
@@ -454,7 +457,7 @@ fpm  -f -s dir -t rpm -n php-common -p php-common-"${VERSION}"."${ARCH}".rpm -v 
     /usr/lib64/php/modules/phar.so /usr/lib64/php/modules/zip.so var/lib/php
 
 # php-devel
-fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
+fpm -s dir -t rpm -n php-devel -p "$PACKAGE_DIR"/php-devel-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
     --provides "config(php-devel)" \
     --provides "php-devel" \
     --provides "php-devel(x86-64)" \
@@ -471,7 +474,7 @@ fpm -s dir -t rpm -n php-devel -p "$TEMPDIR"/php-devel-"${VERSION}"."${ARCH}".rp
 
 # php-gd
 createmoduleini gd
-fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
+fpm -n php-gd -s dir -t rpm -p "$PACKAGE_DIR"/php-gd-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" -f \
     --provides "config(php-gd)" \
     --provides "gd.so()(64bit)" \
     --provides "php-gd" \
@@ -502,7 +505,7 @@ fpm -n php-gd -s dir -t rpm -p "$TEMPDIR"/php-gd-"${VERSION}"."${ARCH}".rpm -v "
 
 # php-mcrypt
 createmoduleini mcrypt
-fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt-"${VERSION}"."${ARCH}".rpm \
+fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$PACKAGE_DIR"/php-mcrypt-"${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mcrypt)" \
     --provides "mcrypt.so()(64bit)" \
     --provides "php-mcrypt" \
@@ -524,7 +527,7 @@ fpm -f -s dir -t rpm -n php-mcrypt -v "${VERSION}" -p "$TEMPDIR"/php-mcrypt-"${V
 
 # php-mysql
 createmoduleini mysql mysqli pdo_mysql mysqlnd
-fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$TEMPDIR"/php-mysql-"${VERSION}"."${ARCH}".rpm \
+fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$PACKAGE_DIR"/php-mysql-"${VERSION}"."${ARCH}".rpm \
     --provides "config(php-mysql)" \
     --provides "mysql.so()(64bit)" \
     --provides "mysqli.so()(64bit)" \
