@@ -118,7 +118,7 @@ yum install -y httpd-devel \
     freetds-devel \
     libxslt-devel
 
-# Fetch & build
+## Fetch & build
 
 tarball=php-"${VERSION}".tar.gz
 wget http://us1.php.net/get/php-"${VERSION}".tar.gz/from/this/mirror -O "$tarball"
@@ -128,6 +128,10 @@ tar xzf "$tarball"
 
 cd php-"${VERSION}"
 
+## Configure flags
+# recode support was stripped out due to incompatibility with IMAP and MySQL
+# --with-system-tzdata wasn't recognized, and appears to be deprecated, so it was stripped out
+# --enable-fastcgi is enabled automatically when CGI in general is enabled, so it was removed as well
 configure_flags="--build=x86_64-redhat-linux-gnu --host=x86_64-redhat-linux-gnu --target=x86_64-redhat-linux-gnu \
     --program-prefix= \
     --prefix=/usr --exec-prefix=/usr \
@@ -230,7 +234,7 @@ make
 make install
 
 # Apache support disables building php-cgi binary, so we have to build
-# it again to have our cake and eat it too
+# it again in order to have our cake and eat it too
 ./configure $configure_flags --with-apxs2=shared,/usr --with-apxs2=/usr/sbin/apxs
 
 make
@@ -560,4 +564,4 @@ fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$PACKAGE_DIR"/php-mysql-"$
     /etc/php.d/mysql.ini /etc/php.d/mysqli.ini /etc/php.d/pdo_mysql.ini /etc/php.d/mysqlnd.ini \
     /usr/lib64/php/modules/mysql.so /usr/lib64/php/modules/mysqli.so /usr/lib64/php/modules/pdo_mysql.so /usr/lib64/php/modules/mysqlnd.so
 
-echo "Packages are available in $TEMPDIR"
+echo "Packages are available in $PACAKGE_DIR"
