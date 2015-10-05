@@ -5,7 +5,7 @@
 # the official CentOS RPMs. Several documentation folders have been skipped for the sake of speed, but it should otherwise be a
 # drop-in replacement for PHP on CentOS 6
 #
-# The follow command was used to generate the --provides and --depends flags from a system with the package installed:
+# The following command was used to generate the --provides and --depends flags from a system with the package installed:
 # export PK=php-<name>; rpm -q --provides "$PK" | awk '{ print " --provides \""$1"\" \\"}'; rpm -qR "$PK" | awk '{ print " --depends \""$1"\" \\"}';
 
 ## Variables
