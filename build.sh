@@ -208,7 +208,7 @@ cd /
 
 # php-pdo
 createmoduleini pdo pdo_sqlite sqlite3
-fpm -s dir -t rpm \
+fpm -f -s dir -t rpm \
     -n php-pdo -v "${VERSION}" \
     -p "$PACKAGE_DIR"/php-pdo-"${VERSION}"."${ARCH}".rpm \
     --depends "config(php-pdo)" \
@@ -238,7 +238,7 @@ fpm -s dir -t rpm \
     /etc/php.d/pdo.ini /etc/php.d/pdo_sqlite.ini  /etc/php.d/sqlite3.ini /usr/lib64/php/modules/pdo_sqlite.so /usr/lib64/php/modules/pdo.so /usr/lib64/php/modules/sqlite3.so
 
 # php
-fpm -s dir -t rpm -n php \
+fpm -f -s dir -t rpm -n php \
     -p "$PACKAGE_DIR"/php-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php)" \
     --provides "libphp5.so()(64bit)" \
@@ -292,7 +292,7 @@ fpm -s dir -t rpm -n php \
     /etc/httpd/conf.d/php.conf /usr/lib64/httpd/modules/libphp5.so /var/lib/php/session/
 
 # php-cli
-fpm -s dir -t rpm -n php-cli \
+fpm -f -s dir -t rpm -n php-cli \
     -p "$PACKAGE_DIR"/php-cli-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "php-cgi" \
     --provides "php-pcntl" \
@@ -348,7 +348,7 @@ fpm -s dir -t rpm -n php-cli \
 
 # php-common
 createmoduleini curl fileinfo json phar zip
-fpm  -f -s dir -t rpm -n php-common -p "$PACKAGE_DIR"/php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
+fpm -f -s dir -t rpm -n php-common -p "$PACKAGE_DIR"/php-common-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
     --provides "config(php-common)" \
     --provides "curl.so()(64bit)" \
     --provides "fileinfo.so()(64bit)" \
