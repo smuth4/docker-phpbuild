@@ -4,6 +4,9 @@
 # For the most part, the configure flags, the --provides flags, the --depends flags, and the file lists are borrowed directly from
 # the official CentOS RPMs. Several documentation folders have been skipped for the sake of speed, but it should otherwise be a
 # drop-in replacement for PHP on CentOS 6
+#
+# The follow command was used to generate the --provides and --depends flags from a system with the package installed:
+# export PK=php-<name>; rpm -q --provides "$PK" | awk '{ print " --provides \""$1"\" \\"}'; rpm -qR "$PK" | awk '{ print " --depends \""$1"\" \\"}';
 
 ## Variables
 
@@ -564,4 +567,46 @@ fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$PACKAGE_DIR"/php-mysql-"$
     /etc/php.d/mysql.ini /etc/php.d/mysqli.ini /etc/php.d/pdo_mysql.ini /etc/php.d/mysqlnd.ini \
     /usr/lib64/php/modules/mysql.so /usr/lib64/php/modules/mysqli.so /usr/lib64/php/modules/pdo_mysql.so /usr/lib64/php/modules/mysqlnd.so
 
-echo "Packages are available in $PACAKGE_DIR"
+# php-bcmath
+createmoduleini bcmath
+fpm -f -s dir -t rpm -n php-bcmath -v "${VERSION}" -p "$PACKAGE_DIR"/php-bcmath-"${VERSION}"."${ARCH}".rpm \
+    --provides "bcmath.so()(64bit)" \
+    --provides "config(php-bcmath)" \
+    --provides "php-bcmath" \
+    --provides "php-bcmath(x86-64)" \
+    --depends "config(php-bcmath)" \
+    --depends "libc.so.6()(64bit)" \
+    --depends "libc.so.6(GLIBC_2.2.5)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.3)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.3.4)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.4)(64bit)" \
+    --depends "php-common(x86-64)" \
+    --depends "rpmlib(CompressedFileNames)" \
+    --depends "rpmlib(FileDigests)" \
+    --depends "rpmlib(PayloadFilesHavePrefix)" \
+    --depends "rtld(GNU_HASH)" \
+    --depends "rpmlib(PayloadIsXz)" \
+    /etc/php.d/bcmath.ini /usr/lib64/php/modules/bcmath.so
+
+# php-mbstring
+createmoduleini mbstring
+fpm -f -s dir -t rpm -n php-mbstring -v "${VERSION}" -p "$PACKAGE_DIR"/php-mbstring-"${VERSION}"."${ARCH}".rpm \
+    --provides "config(php-mbstring)" \
+    --provides "mbstring.so()(64bit)" \
+    --provides "php-mbstring" \
+    --provides "php-mbstring(x86-64)" \
+    --depends "config(php-mbstring)" \
+    --depends "libc.so.6()(64bit)" \
+    --depends "libc.so.6(GLIBC_2.2.5)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.3)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.3.4)(64bit)" \
+    --depends "libc.so.6(GLIBC_2.4)(64bit)" \
+    --depends "php-common(x86-64)" \
+    --depends "rpmlib(CompressedFileNames)" \
+    --depends "rpmlib(FileDigests)" \
+    --depends "rpmlib(PayloadFilesHavePrefix)" \
+    --depends "rtld(GNU_HASH)" \
+    --depends "rpmlib(PayloadIsXz)" \    
+    /etc/php.d/mbstring.ini /usr/lib64/php/modules/mbstring.so
+    
+echo "Packages are available in $PACKAGE_DIR"
