@@ -563,7 +563,7 @@ fpm -f -s dir -t rpm -n php-mbstring -v "${VERSION}" -p "$PACKAGE_DIR"/php-mbstr
     --depends "rpmlib(FileDigests)" \
     --depends "rpmlib(PayloadFilesHavePrefix)" \
     --depends "rtld(GNU_HASH)" \
-    --depends "rpmlib(PayloadIsXz)" \    
+    --depends "rpmlib(PayloadIsXz)" \
     /etc/php.d/mbstring.ini /usr/lib64/php/modules/mbstring.so
     
 echo "Packages are available in $PACKAGE_DIR"
