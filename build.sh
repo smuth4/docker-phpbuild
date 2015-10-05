@@ -21,7 +21,7 @@ TEMPDIR="$(mktemp -d)"
 function createmoduleini() {
     mkdir -p /etc/php.d
     for name; do
-        echo "; Enable $name extension module\nextension=$name.so" > /etc/php.d/"$name".ini
+        echo -e "; Enable $name extension module\nextension=$name.so" > /etc/php.d/"$name".ini
     done
 }
 
@@ -77,49 +77,6 @@ DirectoryIndex index.php
 EOF
 
 cd "$TEMPDIR"
-
-## Install packages
-
-# Tools
-yum install -y wget tar gcc gcc-c++ rpm-build
-# mycrypt and a couple other libraries are only available through EPEL
-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-
-
-yum install -y ruby rubygems ruby-devel
-gem install --no-rdoc --no-ri fpm
-
-# Development libraries
-yum install -y httpd-devel \
-    mysql-devel \
-    libmcrypt-devel \
-    curl-devel \
-    openssl-devel \
-    libedit-devel \
-    readline-devel \
-    sqlite-devel \
-    db4-devel \
-    enchant-devel \
-    libjpeg-devel \
-    libpng-devel \
-    libXpm-devel \
-    freetype-devel \
-    t1lib-devel \
-    gmp-devel \
-    libicu-devel \
-    openldap-devel \
-    unixODBC-devel \
-    postgresql-devel \
-    aspell-devel \
-    net-snmp-devel \
-    sqlite2-devel \
-    libtidy-devel \
-    libxml2-devel \
-    bzip2-devel \
-    httpd-devel \
-    libc-client-devel \
-    freetds-devel \
-    libxslt-devel
 
 ## Fetch & build
 

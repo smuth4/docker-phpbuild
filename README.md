@@ -4,7 +4,7 @@ Build php inside a Docker container
 ### Usage
 
 ```
-docker build -t phpbuild .
+docker build --no-cache -t phpbuild .
 docker -d -v "$(pwd)":/packages phpbuild
 ```
 
@@ -20,3 +20,5 @@ This will generate the finished RPMs in the current directory.
 
 The build script installs PHP system-wide, it should not be run on a "special snowflake" machine.
 TODO: Change this.
+
+Development packages are cached in intermediate layers to speed up build testing, hence the '--no-cache' when actually build the image
