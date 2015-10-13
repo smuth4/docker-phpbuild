@@ -5,7 +5,7 @@ Build php inside a Docker container
 
 ```
 docker build --no-cache -t phpbuild .
-docker -d -v "$(pwd)":/packages phpbuild
+docker run -d -v "$(pwd)":/packages phpbuild
 ```
 
 This will generate the finished RPMs in the current directory.
