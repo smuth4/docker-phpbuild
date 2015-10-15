@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # A custom build script for PHP
 #
 # For the most part, the configure flags, the --provides flags, the --depends flags, and the file lists are borrowed directly from
@@ -238,8 +238,12 @@ fpm -f -s dir -t rpm \
     /etc/php.d/pdo.ini /etc/php.d/pdo_sqlite.ini  /etc/php.d/sqlite3.ini /usr/lib64/php/modules/pdo_sqlite.so /usr/lib64/php/modules/pdo.so /usr/lib64/php/modules/sqlite3.so
 
 # php
+chown root:48 /var/lib/php/session/ # 49 = apache GID
+chmod 770 /var/lib/php/session/
+
 fpm -f -s dir -t rpm -n php \
     -p "$PACKAGE_DIR"/php-"${VERSION}"."${ARCH}".rpm -v "${VERSION}" \
+    --rpm-use-file-permissions \
     --provides "config(php)" \
     --provides "libphp5.so()(64bit)" \
     --provides "mod_php" \
@@ -514,6 +518,7 @@ fpm -f -s dir -t rpm -n php-mysql -v "${VERSION}" -p "$PACKAGE_DIR"/php-mysql-"$
     --depends "libnsl.so.1()(64bit)" \
     --depends "libssl.so.10()(64bit)" \
     --depends "libz.so.1()(64bit)" \
+    --depends "libt1.so.5()(64bit)" \
     --depends "php-common(x86-64)" \
     --depends "php-pdo(x86-64)" \
     --depends "rpmlib(CompressedFileNames)" \
